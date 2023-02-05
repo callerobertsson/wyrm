@@ -4,7 +4,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/callerobertsson/wolgo/wyrm"
+	"github.com/callerobertsson/wyrm"
 )
 
 var w *wyrm.Wyrm
