@@ -80,7 +80,8 @@ func (w *Wyrm) Run() {
 	// Disable buffering and set no display
 	// Ugly hack because Macos (Darwin) needs -f and Linux -F
 	f := "-F"
-	if runtime.GOOS != "linux" {
+	fmt.Println("GOOS", runtime.GOOS)
+	if runtime.GOOS == "darwin" {
 		f = "-f"
 	}
 
