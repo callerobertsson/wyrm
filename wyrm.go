@@ -4,6 +4,7 @@ package wyrm
 import (
 	"fmt"
 	"os/exec"
+	"runtime"
 	"sort"
 )
 
@@ -77,8 +78,14 @@ func (w *Wyrm) GetCurrentKeyStrings() []string {
 func (w *Wyrm) Run() {
 
 	// Disable buffering and set no display
-	exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
-	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
+	// Ugly hack because Macos (Darwin) needs -f and Linux -F
+	f := "-F"
+	if runtime.GOOS != "linux" {
+		f = "-f"
+	}
+
+	exec.Command("stty", f, "/dev/tty", "cbreak", "min", "1").Run()
+	exec.Command("stty", f, "/dev/tty", "-echo").Run()
 
 	// Loop until quit
 	for {
