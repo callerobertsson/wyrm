@@ -78,10 +78,9 @@ func (w *Wyrm) GetCurrentKeyStrings() []string {
 func (w *Wyrm) Run() {
 
 	// Disable buffering and set no display
-	// Ugly hack because Macos (Darwin) needs -f and Linux -F
 	f := "-F"
-	fmt.Println("GOOS", runtime.GOOS)
 	if runtime.GOOS == "darwin" {
+		// Ugly hack because Macos (Darwin) needs -f iso -F
 		f = "-f"
 	}
 

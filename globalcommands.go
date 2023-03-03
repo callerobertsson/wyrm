@@ -127,6 +127,10 @@ func (w *Wyrm) shellCommand() error {
 func (w *Wyrm) quitCommand() error {
 	fmt.Printf("bye!\n")
 
+	// This does not work on Darwin
+	// But command works in a Darwin terminal so an alias like this:
+	//   alias bu='clear && bujogo && reset'
+	// can be helpful
 	exec.Command("reset").Run()
 
 	os.Exit(0)
