@@ -14,7 +14,8 @@ var helloCmd = wyrm.Command{
 	Title:       "hello",
 	Description: "print hello world",
 	Function:    func() error { fmt.Println("hello world!"); return nil },
-	Pre:         func() error { fmt.Println("Pre command printed this"); return nil },
+	Pre:         func() error { fmt.Println("(pre command printed this)"); return nil },
+	Post:        func() error { fmt.Println("(post command printed this)"); return nil },
 }
 
 // abortCmd always returns ErrAbout
@@ -36,7 +37,7 @@ var errorCmd = wyrm.Command{
 	Title:       "errors",
 	Description: "select what error to show",
 	Commands: map[rune]*wyrm.Command{
-		'p': {
+		'<': {
 			Title:       "pre",
 			Description: "Show a Pre function error",
 			Pre:         func() error { return fmt.Errorf("Planned Pre Error") },
@@ -46,6 +47,12 @@ var errorCmd = wyrm.Command{
 			Title:       "command",
 			Description: "Show a command error",
 			Function:    func() error { return fmt.Errorf("Planned Command Error") },
+		},
+		'>': {
+			Title:       "post",
+			Description: "Show a Post function error",
+			Post:        func() error { return fmt.Errorf("Planned Post Error") },
+			Function:    func() error { fmt.Println("Correct output"); return nil },
 		},
 	},
 }
@@ -66,11 +73,13 @@ func main() {
 						Title:       "string",
 						Description: "input a string",
 						Function:    inputText,
+						Post:        func() error { fmt.Println("text was inputted"); return nil },
 					},
 					'n': {
 						Title:       "number",
 						Description: "input a number",
 						Function:    inputNumber,
+						Pre:         func() error { fmt.Println("pre number selection"); return nil },
 					},
 					't': &inputTimeCmd,
 					wyrm.RuneSpace: {
