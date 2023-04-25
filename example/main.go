@@ -15,7 +15,6 @@ var helloCmd = wyrm.Command{
 	Description: "print hello world",
 	Function:    func() error { fmt.Println("hello world!"); return nil },
 	Pre:         func() error { fmt.Println("Pre command printed this"); return nil },
-	Post:        func() error { fmt.Println("Post command printed this"); return nil },
 }
 
 // abortCmd always returns ErrAbout
@@ -32,12 +31,12 @@ var inputTimeCmd = wyrm.Command{
 	Function:    inputTime,
 }
 
-// errorCmd shows Pre and Post errors
+// errorCmd shows Pre and Command errors
 var errorCmd = wyrm.Command{
 	Title:       "errors",
 	Description: "select what error to show",
 	Commands: map[rune]*wyrm.Command{
-		'<': {
+		'p': {
 			Title:       "pre",
 			Description: "Show a Pre function error",
 			Pre:         func() error { return fmt.Errorf("Planned Pre Error") },
@@ -48,12 +47,6 @@ var errorCmd = wyrm.Command{
 			Description: "Show a command error",
 			Function:    func() error { return fmt.Errorf("Planned Command Error") },
 		},
-		'>': {
-			Title:       "post",
-			Description: "Show a Post function error",
-			Function:    func() error { fmt.Println("Command output"); return nil },
-			Post:        func() error { return fmt.Errorf("Planned Post Error") },
-		},
 	},
 }
 
@@ -62,6 +55,7 @@ func main() {
 	cmds := wyrm.Command{
 		Title:       "wyrm",
 		Description: "wyrm example program",
+		Pre:         func() error { fmt.Println("Root Pre (could clear screen)"); return nil },
 		Commands: map[rune]*wyrm.Command{
 			'h': &helloCmd,
 			'i': {
@@ -102,6 +96,9 @@ func main() {
 
 	fmt.Println("Wyrm Example")
 	fmt.Println("use q to quit and ? for help")
+
+	// Manually run Pre command for root
+	w.GetCurrentCommand().Pre()
 
 	// Run Wyrm
 	w.Run()
