@@ -14,6 +14,8 @@ var helloCmd = wyrm.Command{
 	Title:       "hello",
 	Description: "print hello world",
 	Function:    func() error { fmt.Println("hello world!"); return nil },
+	Pre:         func() error { fmt.Println("Pre command printed this"); return nil },
+	Post:        func() error { fmt.Println("Post command printed this"); return nil },
 }
 
 // abortCmd always returns ErrAbout
@@ -28,6 +30,31 @@ var inputTimeCmd = wyrm.Command{
 	Title:       "time",
 	Description: "input a time as HH:MM or HHMM",
 	Function:    inputTime,
+}
+
+// errorCmd shows Pre and Post errors
+var errorCmd = wyrm.Command{
+	Title:       "errors",
+	Description: "select what error to show",
+	Commands: map[rune]*wyrm.Command{
+		'<': {
+			Title:       "pre",
+			Description: "Show a Pre function error",
+			Pre:         func() error { return fmt.Errorf("Planned Pre Error") },
+			Function:    func() error { fmt.Println("This should not be shown"); return nil },
+		},
+		'c': {
+			Title:       "command",
+			Description: "Show a command error",
+			Function:    func() error { return fmt.Errorf("Planned Command Error") },
+		},
+		'>': {
+			Title:       "post",
+			Description: "Show a Post function error",
+			Function:    func() error { fmt.Println("Command output"); return nil },
+			Post:        func() error { return fmt.Errorf("Planned Post Error") },
+		},
+	},
 }
 
 func main() {
@@ -66,6 +93,7 @@ func main() {
 				Description: "select by index",
 				Function:    selectIndex,
 			},
+			'e': &errorCmd,
 		},
 	}
 
