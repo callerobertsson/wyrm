@@ -4,6 +4,9 @@ import (
 	"fmt"
 )
 
+// ErrEmpty is returned for empty input
+var ErrEmpty = fmt.Errorf("empty input")
+
 // ErrAbort indicates that the user wants to abort input
 var ErrAbort = fmt.Errorf("abort")
 

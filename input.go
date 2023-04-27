@@ -43,7 +43,7 @@ func InputText(p string, def string) (input string, err error) {
 	case err != nil:
 		return input, err
 	case input == "":
-		return input, ErrAbort
+		return input, ErrEmpty
 	}
 
 	return strings.TrimSpace(input), nil
