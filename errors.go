@@ -7,6 +7,9 @@ import (
 // ErrEmpty is returned for empty input
 var ErrEmpty = fmt.Errorf("empty input")
 
+// ErrDone is returned if user presses Ctrl-D
+var ErrDone = fmt.Errorf("done")
+
 // ErrAbort indicates that the user wants to abort input
 var ErrAbort = fmt.Errorf("abort")
 
