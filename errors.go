@@ -1,3 +1,4 @@
+// Package wyrm error definitions
 package wyrm
 
 import (

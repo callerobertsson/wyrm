@@ -41,7 +41,7 @@ var errorCmd = wyrm.Command{
 		'<': {
 			Title:       "pre",
 			Description: "Show a Pre function error",
-			Pre:         func() error { return fmt.Errorf("Planned Pre Error") },
+			Pre:         func() error { return fmt.Errorf("planned Pre Error") },
 			Sort:        1,
 			Function:    func() error { fmt.Println("This should not be shown"); return nil },
 		},
@@ -49,12 +49,12 @@ var errorCmd = wyrm.Command{
 			Title:       "command",
 			Description: "Show a command error",
 			Sort:        2,
-			Function:    func() error { return fmt.Errorf("Planned Command Error") },
+			Function:    func() error { return fmt.Errorf("planned Command Error") },
 		},
 		'>': {
 			Title:       "post",
 			Description: "Show a Post function error",
-			Post:        func() error { return fmt.Errorf("Planned Post Error") },
+			Post:        func() error { return fmt.Errorf("planned Post Error") },
 			Sort:        3,
 			Function:    func() error { fmt.Println("Correct output"); return nil },
 		},
