@@ -13,6 +13,7 @@ var w *wyrm.Wyrm
 var helloCmd = wyrm.Command{
 	Title:       "hello",
 	Description: "print hello world",
+	Sort:        1, // want this to be first
 	Function:    func() error { fmt.Println("hello world!"); return nil },
 }
 
@@ -36,10 +37,10 @@ func main() {
 		Title:       "wyrm",
 		Description: "wyrm example program",
 		Commands: map[rune]*wyrm.Command{
-			'h': &helloCmd,
 			'i': {
 				Title:       "input",
 				Description: "input different stuff using sub commands",
+				// no Sort value -> place it last somewhere
 				Commands: map[rune]*wyrm.Command{
 					's': {
 						Title:       "string",
@@ -64,8 +65,10 @@ func main() {
 			's': {
 				Title:       "select",
 				Description: "select by index",
+				Sort:        2, // want this to be second
 				Function:    selectIndex,
 			},
+			'h': &helloCmd, // Sort: 1
 		},
 	}
 

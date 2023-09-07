@@ -20,6 +20,7 @@ type Wyrm struct {
 type Command struct {
 	Title       string
 	Description string
+	Sort        int
 	Commands    map[rune]*Command
 	Parent      *Command
 	Function    func() error
@@ -27,8 +28,26 @@ type Command struct {
 
 // state struct holds the internal current state of Wyrm
 type state struct {
-	cmd *Command // current command
 	key rune     // pressed key
+	cmd *Command // current command
+}
+
+type stateByOrder []state
+
+func (a stateByOrder) Len() int      { return len(a) }
+func (a stateByOrder) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a stateByOrder) Less(i, j int) bool {
+	// fmt.Printf("comparing %v (%v) and %v (%v): ", a[i].cmd.Sort, string(a[i].key), a[j].cmd.Sort, string(a[j].key))
+	if a[i].cmd.Sort == 0 {
+		return false // 0 is never less than anything
+	}
+	if a[j].cmd.Sort == 0 {
+		return true // 0 is never less than anything
+	}
+	if a[i].cmd.Sort < a[j].cmd.Sort {
+		return true // normal compare
+	}
+	return false
 }
 
 // New creates a new wyrm
@@ -36,8 +55,8 @@ func New(rootCommand *Command) *Wyrm {
 	w := Wyrm{
 		rootCommand,
 		state{
-			cmd: rootCommand,
 			key: rune(' '),
+			cmd: rootCommand,
 		},
 		nil,
 	}
@@ -63,14 +82,21 @@ func (w *Wyrm) GetCurrentKey() rune {
 // GetCurrentKeyStrings returns the keys, no special keys, of the Command as stings in alphabetically order
 func (w *Wyrm) GetCurrentKeyStrings() []string {
 	keys := []string{}
-	for k := range w.state.cmd.Commands {
-		if isSpecialKey(k) {
-			continue
-		}
-		keys = append(keys, string(k))
+
+	states := []state{}
+	for r, c := range w.state.cmd.Commands {
+		states = append(states, state{r, c})
 	}
 
-	sort.Strings(keys)
+	sort.Sort(stateByOrder(states))
+
+	for _, s := range states {
+		if isSpecialKey(s.key) {
+			continue
+		}
+		keys = append(keys, string(s.key))
+	}
+
 	return keys
 }
 
