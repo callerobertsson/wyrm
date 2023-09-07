@@ -4,16 +4,16 @@ package wyrm
 var indices []rune
 
 func init() {
-	// 0, .., 9
-	for i := 48; i <= 57; i++ {
-		indices = append(indices, rune(i))
-	}
 	// a, ..., z
 	for i := 97; i <= 122; i++ {
 		indices = append(indices, rune(i))
 	}
 	// A, ..., Z
 	for i := 65; i <= 90; i++ {
+		indices = append(indices, rune(i))
+	}
+	// 0, .., 9
+	for i := 48; i <= 57; i++ {
 		indices = append(indices, rune(i))
 	}
 }

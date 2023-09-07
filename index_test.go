@@ -5,7 +5,7 @@ import (
 )
 
 func TestGetIndexRunes(t *testing.T) {
-	exp := "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	exp := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	res := GetIndexRunes()
 	if string(res) != exp {
 		t.Errorf("GetIndexRunes = %q, expected %q", string(res), exp)

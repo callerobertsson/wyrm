@@ -38,12 +38,14 @@ func InputText(p string, def string) (input string, err error) {
 
 	input, err = r.Readline()
 	switch {
-	case err == io.EOF || err == readline.ErrInterrupt:
+	case err == readline.ErrInterrupt:
 		return input, ErrAbort
+	case err == io.EOF:
+		return input, ErrDone
 	case err != nil:
 		return input, err
 	case input == "":
-		return input, ErrAbort
+		return input, ErrEmpty
 	}
 
 	return strings.TrimSpace(input), nil

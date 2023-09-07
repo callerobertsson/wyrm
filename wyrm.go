@@ -24,6 +24,8 @@ type Command struct {
 	Commands    map[rune]*Command
 	Parent      *Command
 	Function    func() error
+	Pre         func() error
+	Post        func() error
 }
 
 // state struct holds the internal current state of Wyrm
@@ -134,17 +136,34 @@ func (w *Wyrm) Run() {
 			cmd.Parent = w.state.cmd
 			w.state.cmd = cmd
 
+			// Execute Pre if present
+			if w.state.cmd.Pre != nil {
+				if err := w.state.cmd.Pre(); err != nil {
+					fmt.Printf("Error: %s\n", err)
+					w.state.cmd = w.rootCommand
+					continue
+				}
+			}
+
 			// Execute function if present
 			if w.state.cmd.Function != nil {
 				err := w.state.cmd.Function()
-				if err == ErrAbort {
+				switch {
+				case err == ErrAbort:
 					w.state.cmd = w.state.cmd.Parent
 					if w.state.cmd == nil {
 						w.state.cmd = w.rootCommand
 					}
 					continue
-				}
-				if err != nil {
+				case err == nil:
+					if w.state.cmd.Post != nil {
+						if err := w.state.cmd.Post(); err != nil {
+							fmt.Printf("Error: %s\n", err)
+							w.state.cmd = w.rootCommand
+							continue
+						}
+					}
+				default:
 					fmt.Printf("Error: %s\n", err)
 				}
 
