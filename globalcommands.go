@@ -104,8 +104,11 @@ func (w *Wyrm) detailedHelpCommand() error {
 	w.commandsHelpCommand()
 	fmt.Printf("Global command keys:\n")
 	for r := range w.getGlobalCommands() {
-		fmt.Printf("%12s - %s\n", "["+globalKeyInfo[r][0]+"]", globalKeyInfo[r][1])
-
+		text := globalKeyInfo[r][1]
+		if _, exists := w.state.cmd.Commands[r]; exists {
+			text = "overridden for current command"
+		}
+		fmt.Printf("%12s - %s\n", "["+globalKeyInfo[r][0]+"]", text)
 	}
 	return nil
 }
