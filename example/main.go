@@ -28,6 +28,7 @@ var abortCmd = wyrm.Command{
 
 // inputTimeCmd prompts the user for a time and prints it
 var inputTimeCmd = wyrm.Command{
+	Sort:        99,
 	Title:       "time",
 	Description: "input a time as HH:MM or HHMM",
 	Function:    inputTime,
@@ -37,6 +38,7 @@ var inputTimeCmd = wyrm.Command{
 var errorCmd = wyrm.Command{
 	Title:       "errors",
 	Description: "select what error to show",
+	Function:    func() error { fmt.Println("Press <space> for an overriden global command"); return nil },
 	Commands: map[rune]*wyrm.Command{
 		'<': {
 			Title:       "pre",
@@ -58,6 +60,13 @@ var errorCmd = wyrm.Command{
 			Sort:        3,
 			Function:    func() error { fmt.Println("Correct output"); return nil },
 		},
+		wyrm.RuneSpace: { // override wyrm global command
+			Title:       "extra",
+			Description: "test another level",
+			Commands: map[rune]*wyrm.Command{
+				'a': &abortCmd,
+			},
+		},
 	},
 }
 
@@ -71,28 +80,23 @@ func main() {
 			'i': {
 				Title:       "input",
 				Description: "input different stuff using sub commands",
-				// no Sort value -> place it last somewhere
+				Sort:        3, // third place
 				Commands: map[rune]*wyrm.Command{
 					's': {
+						Sort:        1,
 						Title:       "string",
 						Description: "input a string",
 						Function:    inputText,
 						Post:        func() error { fmt.Println("text was inputted"); return nil },
 					},
 					'n': {
+						Sort:        2,
 						Title:       "number",
 						Description: "input a number",
 						Function:    inputNumber,
 						Pre:         func() error { fmt.Println("pre number selection"); return nil },
 					},
 					't': &inputTimeCmd,
-					wyrm.RuneSpace: {
-						Title:       "extra",
-						Description: "test another level",
-						Commands: map[rune]*wyrm.Command{
-							'a': &abortCmd,
-						},
-					},
 				},
 			},
 			's': {

@@ -75,15 +75,22 @@ func (w *Wyrm) commandsHelpCommand() error {
 	// Define a recursive command info printer
 	var p func(cmd *Command, indent string)
 	p = func(cmd *Command, indent string) {
+		states := []state{}
 		for k, c := range cmd.Commands {
-			key := string(k)
-			if info, ok := globalKeyInfo[k]; ok {
-				key = info[0]
-			}
-			fmt.Printf(indent+"[%s] %q - %s\n", key, c.Title, c.Description)
-			p(c, indent+pad)
+			states = append(states, state{k, c})
 		}
 
+		sort.Sort(stateByOrder(states))
+
+		for _, s := range states {
+			// fmt.Println("state:", string(s.key))
+			key := string(s.key)
+			if info, ok := globalKeyInfo[s.key]; ok {
+				key = info[0]
+			}
+			fmt.Printf(indent+"[%s] %q - %s\n", key, s.cmd.Title, s.cmd.Description)
+			p(s.cmd, indent+pad)
+		}
 	}
 
 	// Print recursivly from current command
