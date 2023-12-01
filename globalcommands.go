@@ -23,8 +23,8 @@ const (
 
 // globalKeyInfo hold help for the global command keys
 var globalKeyInfo = map[rune][2]string{
-	RuneEnter:  {"newline", "print help on the current commands"},
-	RuneSpace:  {"space", "print a new prompt"},
+	RuneSpace:  {"space", "show key info for current command"},
+	RuneEnter:  {"newline", "show key info recursivly"},
 	RuneScream: {"!", "execute shell command"},
 	RuneClear:  {"ctrl-l", "clear screen"},
 	RuneEsc:    {"escape", "abort input"},
@@ -35,9 +35,13 @@ var globalKeyInfo = map[rune][2]string{
 // getGlobalCommands returns a rune to Command map with the global commands
 func (w *Wyrm) getGlobalCommands() map[rune]*Command {
 	return map[rune]*Command{
-		RuneEnter: { // enter should probably be overridden by application command
+		RuneSpace: { // key info
+			Description: globalKeyInfo[RuneSpace][1],
+			Function:    func() error { return w.commandsHelpCommand(false) },
+		},
+		RuneEnter: { // key info recursivly
 			Description: globalKeyInfo[RuneEnter][1],
-			Function:    func() error { return w.commandsHelpCommand() },
+			Function:    func() error { return w.commandsHelpCommand(true) },
 		},
 		RuneQue: { // question mark for help
 			Description: globalKeyInfo[RuneQue][1],
@@ -51,10 +55,6 @@ func (w *Wyrm) getGlobalCommands() map[rune]*Command {
 			Description: globalKeyInfo[RuneEsc][1],
 			Function:    func() error { w.state.cmd = w.rootCommand; return nil },
 		},
-		RuneSpace: { // space for new prompt
-			Description: globalKeyInfo[RuneSpace][1],
-			Function:    func() error { return nil },
-		},
 		RuneScream: { // exclamation mark to execute shell command
 			Description: globalKeyInfo[RuneScream][1],
 			Function:    w.shellCommand,
@@ -67,8 +67,8 @@ func (w *Wyrm) getGlobalCommands() map[rune]*Command {
 }
 
 // commandsHelpCommand prints help about the commands
-func (w *Wyrm) commandsHelpCommand() error {
-	fmt.Printf("Available command keys (recursive):\n")
+func (w *Wyrm) commandsHelpCommand(recursive bool) error {
+	fmt.Printf("Available command keys:\n")
 
 	pad := "    "
 
@@ -89,7 +89,9 @@ func (w *Wyrm) commandsHelpCommand() error {
 				key = info[0]
 			}
 			fmt.Printf(indent+"[%s] %q - %s\n", key, s.cmd.Title, s.cmd.Description)
-			p(s.cmd, indent+pad)
+			if recursive {
+				p(s.cmd, indent+pad)
+			}
 		}
 	}
 
@@ -101,7 +103,7 @@ func (w *Wyrm) commandsHelpCommand() error {
 
 // detailedHelpCommand prints help about commands and global commands
 func (w *Wyrm) detailedHelpCommand() error {
-	w.commandsHelpCommand()
+	w.commandsHelpCommand(true)
 	fmt.Printf("Global command keys:\n")
 	for r := range w.getGlobalCommands() {
 		text := globalKeyInfo[r][1]
