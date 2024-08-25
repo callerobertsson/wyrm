@@ -146,7 +146,7 @@ func inputNumber() error {
 }
 
 func inputTime() error {
-	input, err := wyrm.InputTime(w.InputPrompt("HH:MM"), "12:34")
+	input, _, err := wyrm.InputTime(w.InputPrompt("HH:MM"), "12:34")
 	if err != nil {
 		return err
 	}
